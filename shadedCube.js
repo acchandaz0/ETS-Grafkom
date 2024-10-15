@@ -164,12 +164,12 @@ var shadedDodecahedron = function() {
             isMoving = true;
         };
 
-        document.getElementById("reset-constant").onclick = function () {
-            isMoving = false;
-            elapsedTime = 0.0;
-            velocityC = 0;
-            document.getElementById("velocity").innerText = 0;
-        };
+        // document.getElementById("reset-constant").onclick = function () {
+        //     isMoving = false;
+        //     elapsedTime = 0.0;
+        //     velocityC = 0;
+        //     document.getElementById("velocity").innerText = 0;
+        // };
 
         document.getElementById("start-accelerated").onclick = function () {
             mass = parseFloat(document.getElementById("mass").value);
@@ -180,12 +180,12 @@ var shadedDodecahedron = function() {
             isMoving = true;
         };
 
-        document.getElementById("reset-accelerated").onclick = function () {
-            isMoving = false;
-            elapsedTime = 0.0;
-            velocityY = 0;
-            document.getElementById("velocity").innerText = 0;
-        };
+        // document.getElementById("reset-accelerated").onclick = function () {
+        //     isMoving = false;
+        //     elapsedTime = 0.0;
+        //     velocityY = 0;
+        //     document.getElementById("velocity").innerText = 0;
+        // };
 
         render();
     }
