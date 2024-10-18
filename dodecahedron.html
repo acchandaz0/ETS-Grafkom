@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dodecahedron</title>
+    <style>
+        body { text-align: center; }
+        #controls { margin-top: 20px; }
+        input { margin: 5px; }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="gl-canvas" width="470" height="470"></canvas>
+
+    <div>
+        <button id="ButtonX">Rotate X</button>
+        <button id="ButtonY">Rotate Y</button>
+        <button id="ButtonZ">Rotate Z</button>
+        <button id="ButtonT">Toggle Rotation</button>
+        <button id="ButtonBounce">Bounce</button>
+        <button id="ButtonDodecahedron">Dodecahedron</button>
+        <button id="ButtonCube">Cube</button>
+        <br />
+    </div>
+    <br />
+
+    <!-- New input fields for light color and position -->
+    <div>
+        <label
+        >Ambient Light Color:
+        <input type="color" id="ambientColor" value="#808080"
+        /></label>
+        <br />
+        <label
+        >Diffuse Light Color:
+        <input type="color" id="diffuseColor" value="#ffffff"
+        /></label>
+        <br />
+        <label
+        >Specular Light Color:
+        <input type="color" id="specularColor" value="#ffffff"
+        /></label>
+    </div>
+    <br />
+
+    <div>
+      <label
+      >Ambient Material Color:
+      <input type="color" id="m_ambientColor" value="#e100ff"
+      /></label>
+      <br />
+      <label
+      >Diffuse Material Color:
+      <input type="color" id="m_diffuseColor" value="#e1b400"
+      /></label>
+      <br />
+      <label
+      >Specular Material Color:
+      <input type="color" id="m_specularColor" value="#e1b400"
+      /></label>
+  </div>
+  <br />
+
+  <div>
+    <button id="ButtonIncreaseSpeed">Increase Speed Rotation</button>
+    <button id="ButtonDecreaseSpeed">Decrease Speed Rotation</button>
+    <br />
+    <!-- <button id="ButtonIncreaseSpeed">Increase Speed Move</button>
+    <button id="ButtonDecreaseSpeed">Decrease Speed Move</button> -->
+  </div>
+
+  <br />
+  <div class="motion-controls">
+
+    <label for="velocityC">Kecepatan: </label>
+    <input type="number" id="velocityC" value="0" step="0.1">
+    
+    <label for="timeC">Waktu : </label>
+    <input type="number" id="timeC" value="0" step="0.1">
+
+    <br><br>
+
+    <button id="start-constant">Start Constant</button>
+    <!-- <button id="reset-constant">Reset Constant</button> -->
+
+    <br><br>
+
+    <label for="mass">Massa :</label>
+    <input type="number" id="mass" value="0" step="0.1">
+    
+    <label for="force">Gaya :</label>
+    <input type="number" id="force" value="0" step="0.1"><br>
+
+    <label for="timeA">Waktu :</label>
+    <input type="number" id="timeA" value="0" step="0.1">
+
+    <br><br>
+
+    <button id="start-accelerated">Start Accelerated</button>
+    <!-- <button id="reset-accelerated">Reset Accelerated</button> -->
+
+</div>
+
+
+    <!-- <div>
+        <label
+        >Light Position X:
+        <input type="range" id="lightPosX" min="-5" max="5" step="0.1" value="1"
+        /></label>
+        <br />
+        <label
+        >Light Position Y:
+        <input type="range" id="lightPosY" min="-5" max="5" step="0.1" value="1"
+        /></label>
+        <br />
+        <label
+        >Light Position Z:
+        <input type="range" id="lightPosZ" min="-5" max="5" step="0.1" value="1"
+        /></label>
+        <br />
+    </div> -->
+    <br />
+
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      #version 300 es
+
+      in vec4 aPosition;
+      in vec4 aNormal;
+      out vec3 vN, vL, vE;
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+      uniform vec4 uLightPosition;
+
+      void main()
+      {
+          vec3 pos = -(uModelViewMatrix * aPosition).xyz;
+          vec3 light = uLightPosition.xyz;
+          vL = normalize(light - pos);
+          vE =  -pos;
+          vN = normalize((uModelViewMatrix*aNormal).xyz);
+          gl_Position = uProjectionMatrix * uModelViewMatrix * aPosition;
+      }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+      #version 300 es
+
+      precision mediump float;
+
+      uniform vec4 uAmbientProduct;
+      uniform vec4 uDiffuseProduct;
+      uniform vec4 uSpecularProduct;
+      uniform float uShininess;
+      in vec3 vN, vL, vE;
+      out vec4 fColor;
+
+      void main()
+      {
+          vec3 N = normalize(vN);
+          vec3 L = normalize(vL);
+          vec3 E = normalize(vE);
+          vec3 H = normalize(L + E);
+          vec4 ambient = uAmbientProduct;
+          float Kd = max(dot(vL, vN), 0.0);
+          vec4  diffuse = Kd*uDiffuseProduct;
+          float Ks = pow( max(dot(N, H), 0.0), uShininess );
+          vec4  specular = Ks * uSpecularProduct;
+          if(dot(L, N) < 0.0)
+              specular = vec4(0.0, 0.0, 0.0, 1.0);
+          fColor = ambient + diffuse +specular;
+          fColor.a = 1.0;
+      }
+    </script>
+
+    <script src="initShaders.js"></script>
+    <script src="MVnew.js"></script>
+    <script src="shadedDodecahedron.js"></script>
+  </body>
+</html>
